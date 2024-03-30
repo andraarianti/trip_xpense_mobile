@@ -3,19 +3,12 @@ import 'package:trip_xpense/domain/entities/staff_entity.dart';
 
 import '../../domain/usecase/staff_usecase.dart';
 
-class StaffListPage extends StatefulWidget {
-  @override
-  _StaffListPageState createState() => _StaffListPageState();
-}
-
-class _StaffListPageState extends State<StaffListPage> {
+class StaffListPage extends StatelessWidget {
   final StaffUseCase _staffUseCase = StaffUseCase();
-  late Future<List<StaffEntity>> _staffListFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _staffListFuture = _staffUseCase.execute().then((staffList) {
+  Widget build(BuildContext context) {
+    Future<List<StaffEntity>> _staffListFuture = _staffUseCase.execute().then((staffList) {
       return staffList.map((staffModel) {
         return _staffUseCase.mapToEntity(staffModel);
       }).toList();
@@ -24,10 +17,7 @@ class _StaffListPageState extends State<StaffListPage> {
       print('Error fetching staff list: $error');
       return <StaffEntity>[];
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Staff List'),
@@ -53,8 +43,8 @@ class _StaffListPageState extends State<StaffListPage> {
                   child: ListTile(
                     title: Text(staff.name),
                     subtitle: Text(staff.role),
-                    onTap: (){
-                      
+                    onTap: () {
+                      // Handle onTap action
                     },
                     // You can add more information here if needed
                   ),
