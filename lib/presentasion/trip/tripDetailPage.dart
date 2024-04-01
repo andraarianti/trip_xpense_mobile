@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:trip_xpense/domain/entities/expense_entity.dart';
+import 'package:trip_xpense/domain/usecase/expense_usecase.dart';
+import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
 import '../../domain/entities/trip_entity.dart';
 
 class TripDetailPage extends StatelessWidget {
   final TripEntity trip;
+  final ExpenseUseCase _expenseUseCase = ExpenseUseCase();
 
-  const TripDetailPage({Key? key, required this.trip}) : super(key: key);
+  TripDetailPage({Key? key, required this.trip}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Future<List<ExpenseEntity>> _expenseListFuture = _expenseUseCase
+        .getExpenseByTripId(trip.tripId)
+        .then((expenseList) {
+      return expenseList.map((expenseModel) {
+        return _expenseUseCase.mapToEntity(expenseModel);
+      }).toList();
+    }).catchError((error) {
+      // Handle error here
+      print('Error fetching trip list: $error');
+      return <ExpenseEntity>[];
+    });
+
     final dateFormat = DateFormat('dd MMMM yyyy');
 
     return Scaffold(
@@ -94,42 +110,81 @@ class TripDetailPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 10,),
+            Text(
+              'Expense Items',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Expanded(
+              child: FutureBuilder<List<ExpenseEntity>>(
+                future: _expenseListFuture,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  else if(snapshot.hasError){
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  }
+                  else{
+                    final expenseList = snapshot.data!;
+                    return ListView.builder(
+                        itemCount: expenseList.length,
+                        itemBuilder: (context, index){
+                          final expense = expenseList[index];
+                          return Card(
+                            color: expense.isApproved == true ?  Color(0xFFE3F2FD) : Color(0xFFFFCDD2),
+                            child: ListTile(
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                        '${expense.expenseType}',
+                                        style: TextStyle(fontWeight: FontWeight.bold)
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: expense.isApproved == true ? Colors.lightBlue : Colors.red,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      expense.isApproved == true ? 'Approved' : 'Reject',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Text('${expense.itemCost}'),
+                              onTap: () {
+                                // Handle onTap action
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ExpenseDetailPage(expense: expense),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }
+                    );
+                  }
+                },
+              ),
+            ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Konfirmasi'),
-                  content: Text('Apakah Anda yakin ingin menyimpan data?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Batal'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Logika penyimpanan data
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Ya'),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-          ),
-          child: Text('Simpan', style: TextStyle(color: Colors.white)),
         ),
       ),
     );

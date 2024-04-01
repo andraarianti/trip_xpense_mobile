@@ -1,12 +1,15 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:trip_xpense/data/models/trip_model.dart';
 
-class TripRemoteDataSource {
-  final String Url = "https://app.actualsolusi.com/bsi/TripXpense/api";
-  final String _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Imt1cm5pYXNhcmkiLCJuYmYiOjE3MTE3OTkwMzcsImV4cCI6MTcxMTg4NTQzNywiaWF0IjoxNzExNzk5MDM3fQ.RxYTxEfz6By4kixkhc3vudw7qX2VPH_tflrnhcVVxvk";
+import '../models/auth/login_model.dart';
 
+class TripRemoteDataSource {
+
+  final String Url = "https://app.actualsolusi.com/bsi/TripXpense/api";
+  final String _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Imt1cm5pYXNhcmkiLCJuYmYiOjE3MTE5NTMwNDEsImV4cCI6MTcxMjAzOTQ0MSwiaWF0IjoxNzExOTUzMDQxfQ.4Nhy-Enc_HycHmjxOPR4xoyMOTcvfI5_XYKRya-eZ5Q";
   Future<List<TripModel>> getTripInProgress() async {
     var response = await http.get(
         Uri.parse(Url + '/Trip/TripInProgress'),
