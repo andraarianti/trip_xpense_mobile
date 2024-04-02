@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import 'package:trip_xpense/presentasion/bottom_navigation.dart';
-import 'package:trip_xpense/presentasion/staff/staffListPage.dart';
+import 'package:trip_xpense/presentasion/provider/bottom_navigation.dart';
+import 'package:trip_xpense/presentasion/provider/trip_provider.dart';
 
 import '../data/datasources/hive/hive_data_source.dart';
 import '../data/models/auth/login_model.dart';
 import '../domain/usecase/login_usecase.dart';
 import 'auth/login.dart';
 
+final getIt = GetIt.instance;
+
+//semua pengaturan akan ada disini
+void setup(){
+
+}
+
 void main() async{
   //runApp(const MyApp());
+  setup();
   HiveDataSource hiveDataSource = HiveDataSource();
   await hiveDataSource.init();
 
@@ -21,12 +30,13 @@ void main() async{
       ),
       ChangeNotifierProvider<LoginUseCase>(
           create: (_) => LoginUseCase()
-      )
+      ),
+      ChangeNotifierProvider<TripProvider>(
+          create: (_) => TripProvider())
     ],
     child: MyApp(),
   ));
 }
-
 
 class MyApp extends StatelessWidget {
   @override

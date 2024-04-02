@@ -34,6 +34,30 @@ class TripRemoteDataSource {
     }
   }
 
+  Future<List<TripModel>> getTripWithoutDrafted() async {
+    var response = await http.get(
+        Uri.parse(Url + '/Trip/TripWithoutDrafted'),
+        headers: {
+          "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+          "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          'Authorization': 'Bearer $_token',
+        }
+    );
+    //print response.statuscode
+    if (response.statusCode == 200){
+      final jsonData = json.decode(response.body);
+      List<TripModel> tripList = [];
+      for (var item in jsonData){
+        tripList.add(TripModel.fromJson(item));
+      }
+      return tripList;
+    }
+    else{
+      throw Exception('Failed to Load Data Trip');
+    }
+  }
+
   Future<TripModel> getTripById(int id) async {
     var response = await http.get(
         Uri.parse(Url + '/Trip/$id'),

@@ -7,9 +7,19 @@ import 'package:trip_xpense/domain/entities/trip_entity.dart';
 class TripUseCase {
   var repository = TripRepository();
 
-  Future<List<TripModel>> execute() async{
+  Future<List<TripModel>> getTripInProgress() async{
     try{
       final List<TripModel> tripList = await repository.getTripInProgress();
+      return tripList;
+    }
+    catch(e){
+      throw('Error Trip Use Case : $e');
+    }
+  }
+
+  Future<List<TripModel>> getTripWithoutDrafted() async{
+    try{
+      final List<TripModel> tripList = await repository.getTripWithoutDrafted();
       return tripList;
     }
     catch(e){
@@ -35,9 +45,9 @@ class TripUseCase {
         tripId: tripModel.tripId,
         submittedBy: tripModel.submittedBy,
         location: tripModel.location,
+        totalCost: tripModel.totalCost,
         startDate: startDate,
         endDate: endDate,
-        statusId: tripModel.statusId,
         statusName: tripModel.statusName,
         staffName: tripModel.staffName
     );

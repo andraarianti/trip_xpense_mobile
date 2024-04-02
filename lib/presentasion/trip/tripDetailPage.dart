@@ -52,7 +52,7 @@ class TripDetailPage extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: trip.statusId == 0 ? Colors.green : Colors.red,
+                      color: trip.statusName == "In Progress" ? Colors.green : Colors.red,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -77,7 +77,7 @@ class TripDetailPage extends StatelessWidget {
                       Text(
                         'Submitted By: ${trip.staffName}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -85,23 +85,23 @@ class TripDetailPage extends StatelessWidget {
                       Text(
                         'Location: ${trip.location}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Start Date: ${dateFormat.format(trip.startDate)}',
+                        'Total Cost: \$${trip.totalCost}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'End Date: ${dateFormat.format(trip.endDate)}',
+                        'Trip Date: ${dateFormat.format(trip.startDate)} - ${dateFormat.format(trip.endDate)}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -184,6 +184,36 @@ class TripDetailPage extends StatelessWidget {
                 },
               ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Container(
+                height: 40,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: ElevatedButton(
+                  onPressed: (){
+
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.blue),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Submit Trip Approval',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10,)
           ],
         ),
       ),

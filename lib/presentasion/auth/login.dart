@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../../domain/usecase/login_usecase.dart';
 import '../main.dart';
@@ -8,8 +11,8 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final loginUseCase = Provider.of<LoginUseCase>(context);
 
-    String username = '';
-    String password = '';
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -20,22 +23,45 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              onChanged: (value) => username = value,
-              decoration: InputDecoration(
-                labelText: 'Username',
+            Container(
+              height: 300,
+              child: Center(
+                child: Image.asset('assets/images/login.png'),
               ),
             ),
+            Center(
+              child: Text(
+                'Welcome to Trip Xpense Admin',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             TextField(
-              onChanged: (value) => password = value,
+              controller: usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(), // Added outline border
+              ),
+            ),
+            SizedBox(height: 12), // Added space between text fields
+            TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
+                border: OutlineInputBorder(), // Added outline border
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                // Ambil nilai dari input
+                String username = usernameController.text.trim();
+                String password = passwordController.text.trim();
+
                 // Lakukan validasi input
                 if (username.isEmpty || password.isEmpty) {
                   showDialog(
@@ -53,6 +79,7 @@ class LoginPage extends StatelessWidget {
                   );
                   return;
                 }
+
                 // Panggil use case untuk login
                 try {
                   await loginUseCase.login(username, password);

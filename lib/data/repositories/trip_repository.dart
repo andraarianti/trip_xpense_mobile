@@ -17,6 +17,16 @@ class TripRepository{
     }
   }
 
+  Future<List<TripModel>> getTripWithoutDrafted() async{
+    try{
+      final List<TripModel> tripList = await remoteDataSource.getTripWithoutDrafted();
+      return tripList;
+    }
+    catch (e){
+      rethrow;
+    }
+  }
+
   Future<TripModel> getTripById(int id) async{
     try{
       final trip = await remoteDataSource.getTripById(id);

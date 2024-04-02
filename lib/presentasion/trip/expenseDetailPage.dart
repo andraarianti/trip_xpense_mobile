@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:trip_xpense/domain/entities/expense_entity.dart';
 
+import '../../data/models/auth/login_model.dart';
+import '../../domain/usecase/approval_usecase.dart';
+
 class ExpenseDetailPage extends StatelessWidget {
   final ExpenseEntity expense;
+  final ApprovalUseCase _approvalUseCase = ApprovalUseCase();
 
-  const ExpenseDetailPage({Key? key, required this.expense}) : super(key: key);
+  ExpenseDetailPage({Key? key, required this.expense}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
+
+    int approverId;
+    final Box<LoginResponse> box = Hive.box('loginBox');
+
+    final LoginResponse? staff = box.getAt(0);
+    approverId = staff!.staffId;
+
+
     final dateFormat = DateFormat('dd MMMM yyyy');
 
     return Scaffold(
@@ -69,8 +83,16 @@ class ExpenseDetailPage extends StatelessWidget {
                           // Foreground color
                           foregroundColor: Colors.white, backgroundColor: Colors.lightBlueAccent,
                         ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
-                        onPressed: () {
+                        onPressed: () async {
                           // Logika Approve
+                          try {
+                            // Panggil use case untuk menyetujui pengeluaran
+                            await _approvalUseCase.approveExpense(expense.expenseId, approverId);
+                            // Lakukan sesuatu setelah pengeluaran disetujui
+                          } catch (e) {
+                            // Tangani kesalahan jika diperlukan
+                            print('Error approving expense: $e');
+                          }
                         },
                         label: const Text('Approved'),
                         icon: const Icon(Icons.check)
@@ -81,8 +103,16 @@ class ExpenseDetailPage extends StatelessWidget {
                           // Foreground color
                           foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
                         ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
-                        onPressed: () {
+                        onPressed: () async {
                           // Logika Reject
+                          try {
+                            // Panggil use case untuk menyetujui pengeluaran
+                            await _approvalUseCase.rejectExpense(expense.expenseId, approverId);
+                            // Lakukan sesuatu setelah pengeluaran disetujui
+                          } catch (e) {
+                            // Tangani kesalahan jika diperlukan
+                            print('Error approving expense: $e');
+                          }
                         },
                           label: const Text('Reject'),
                           icon: const Icon(Icons.cancel)

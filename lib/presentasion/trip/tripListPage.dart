@@ -8,7 +8,7 @@ class TripListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<List<TripEntity>> _tripListFuture = _tripUseCase.execute().then((tripList){
+    Future<List<TripEntity>> _tripListFuture = _tripUseCase.getTripInProgress().then((tripList){
       return tripList.map((tripModel) {
         return _tripUseCase.mapToEntity(tripModel);
       }).toList();
@@ -50,8 +50,8 @@ class TripListPage extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Nama Staff: ${trip.staffName}'),
-                        Text('Lokasi: ${trip.location}'),
+                        Text('Staff Name: ${trip.staffName}'),
+                        Text('${trip.location} - \$ ${trip.totalCost}'),
                       ],
                     ),
                     onTap: () {

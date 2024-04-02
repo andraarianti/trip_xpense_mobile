@@ -2,9 +2,9 @@ class TripEntity {
   final int tripId;
   final int submittedBy;
   final String location;
+  final double totalCost;
   final DateTime startDate;
   final DateTime endDate;
-  final int statusId;
   final String statusName;
   final String staffName;
 
@@ -12,9 +12,9 @@ class TripEntity {
     required this.tripId,
     required this.submittedBy,
     required this.location,
+    required this.totalCost,
     required this.startDate,
     required this.endDate,
-    required this.statusId,
     required this.statusName,
     required this.staffName,
   });

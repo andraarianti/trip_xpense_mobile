@@ -11,9 +11,13 @@ class LoginResponse {
   @HiveField(1)
   final String token;
 
+  @HiveField(2)
+  final int staffId;
+
   LoginResponse({
     required this.username,
     required this.token,
+    required this.staffId
   });
 
   // Menambahkan metode copyWith
@@ -23,14 +27,16 @@ class LoginResponse {
   }) {
     return LoginResponse(
       username: username ?? this.username,
-      token: token ?? this.token
+      token: token ?? this.token,
+      staffId: staffId ?? this.staffId
     );
   }
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       username: json['Username'],
-      token: json['Token']
+      token: json['Token'],
+      staffId: json['StaffId']
     );
   }
 }
