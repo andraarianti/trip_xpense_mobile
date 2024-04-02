@@ -80,7 +80,7 @@ class StaffProfilePage extends StatelessWidget {
                 final staffData = staffList[0];
                 return ListTile(
                   title: Text('Name: ${staffData.name}'),
-                  subtitle: Text('Email: ${staffData.email}'),
+                  subtitle: Text('StaffId: ${staff?.staffId}'),
                   // Add more staff details here as needed
                 );
               } else {

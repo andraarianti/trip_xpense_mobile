@@ -29,4 +29,23 @@ class ExpenseRemoteDataSource {
       throw Exception('Failed to Load Data Staff');
     }
   }
+
+  Future<ExpenseModel> getExpenseById(expenseid) async {
+    var response = await http.get(
+        Uri.parse(Url + '/Expense/${expenseid}'),
+        headers: {
+          "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+          "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+          "Access-Control-Allow-Methods": "POST, OPTIONS"
+        }
+    );
+    //print response.statuscode
+    if (response.statusCode == 200){
+      final jsonData = json.decode(response.body);
+      return  ExpenseModel.fromJson(jsonData);
+    }
+    else{
+      throw Exception('Failed to Load Data Staff');
+    }
+  }
 }

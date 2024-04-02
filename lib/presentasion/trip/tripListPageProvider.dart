@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trip_xpense/presentasion/trip/tripDetailPage.dart';
 
 import '../provider/trip_provider.dart';
 
@@ -44,6 +45,14 @@ class TripPageProvider extends StatelessWidget {
                           Text('${trip.location} - \$ ${trip.totalCost}'),
                         ],
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TripDetailPage(trip: trip), // Melewatkan nilai tripId
+                          ),
+                        );
+                      },
                     ),
                   );
                 },

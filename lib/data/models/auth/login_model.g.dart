@@ -17,9 +17,9 @@ class LoginResponseAdapter extends TypeAdapter<LoginResponse> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LoginResponse(
-      username: fields[0] as String,
-      token: fields[1] as String,
-      staffId: fields[2] as int,
+      username: fields[0] as String?,
+      token: fields[1] as String?,
+      staffId: fields[2] as int?,
     );
   }
 

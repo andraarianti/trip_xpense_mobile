@@ -16,6 +16,15 @@ class ExpenseUseCase {
     }
   }
 
+  Future<ExpenseModel> getExpenseById(int expenseid) async{
+    try{
+      return await repository.getExpenseById(expenseid);
+    }
+    catch(e){
+      throw('Error Trip Use Case : $e');
+    }
+  }
+
   ExpenseEntity mapToEntity(ExpenseModel expenseModel) {
     return ExpenseEntity(
       expenseId: expenseModel.expenseId,

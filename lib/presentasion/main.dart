@@ -3,7 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_xpense/presentasion/provider/bottom_navigation.dart';
+import 'package:trip_xpense/presentasion/provider/expense_detail_provider.dart';
+import 'package:trip_xpense/presentasion/provider/expense_list_provider.dart';
 import 'package:trip_xpense/presentasion/provider/trip_provider.dart';
+import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
 import '../data/datasources/hive/hive_data_source.dart';
 import '../data/models/auth/login_model.dart';
@@ -32,7 +35,14 @@ void main() async{
           create: (_) => LoginUseCase()
       ),
       ChangeNotifierProvider<TripProvider>(
-          create: (_) => TripProvider())
+          create: (_) => TripProvider()
+      ),
+      ChangeNotifierProvider<ExpenseListProvider>(
+          create: (_) => ExpenseListProvider()
+      ),
+      ChangeNotifierProvider<ExpenseDetailProvider>(
+          create: (_) => ExpenseDetailProvider()
+      ),
     ],
     child: MyApp(),
   ));

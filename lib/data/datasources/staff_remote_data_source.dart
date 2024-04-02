@@ -70,11 +70,6 @@ class StaffRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      // final responseData = jsonDecode(response.body);
-      // final box = Hive.box<LoginResponse>('loginBox');
-      // await box.put('loginBox', responseData);
-      // return LoginResponse.fromJson(responseData);
-
       final responseData = jsonDecode(response.body);
       final loginResponse = LoginResponse.fromJson(responseData);
 

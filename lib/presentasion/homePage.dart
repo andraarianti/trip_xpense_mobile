@@ -15,18 +15,21 @@ class HomePage extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround, // Atur jarak antara card menggunakan MainAxisAlignment
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildCard('Need Approvals', _tripListFuture),
-            _buildCard('Approval Complete', _approvedTripListFuture),
+            Expanded(
+              child: _buildCard('Need Approval', _tripListFuture, Colors.blue), // Ubah warna untuk judul pertama
+            ),
+            Expanded(
+              child: _buildCard('Approval Finish', _approvedTripListFuture, Colors.green), // Ubah warna untuk judul kedua
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Method untuk membangun Card
-  Widget _buildCard(String title, Future<List<TripEntity>> future) {
+  Widget _buildCard(String title, Future<List<TripEntity>> future, Color color) { // Tambahkan parameter color
     return FutureBuilder<List<TripEntity>>(
       future: future,
       builder: (context, snapshot) {
@@ -38,10 +41,11 @@ class HomePage extends StatelessWidget {
           final tripList = snapshot.data!;
           int itemCount = tripList.length;
           return Container(
-            height: 110,
-            width: 180,
+            height: 100,
+            width: 190,
             child: Card(
               elevation: 4,
+              color: color, // Gunakan warna yang diberikan sebagai background card
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
@@ -50,16 +54,18 @@ class HomePage extends StatelessWidget {
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white, // Ubah warna teks menjadi putih agar terlihat jelas di atas background card yang berwarna
                       ),
                     ),
                     SizedBox(height: 10),
                     Text(
                       '$itemCount',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white, // Ubah warna teks menjadi putih agar terlihat jelas di atas background card yang berwarna
                       ),
                     ),
                   ],
@@ -72,7 +78,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Future untuk mendapatkan daftar trip yang masih membutuhkan persetujuan
   Future<List<TripEntity>> get _tripListFuture async {
     final tripList = await _tripUseCase.getTripInProgress();
     return tripList.map((tripModel) {
@@ -80,7 +85,6 @@ class HomePage extends StatelessWidget {
     }).toList();
   }
 
-  // Future untuk mendapatkan daftar trip yang sudah disetujui
   Future<List<TripEntity>> get _approvedTripListFuture async {
     final tripList = await _tripUseCase.getTripInProgress();
     return tripList.map((tripModel) {

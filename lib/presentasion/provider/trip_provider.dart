@@ -38,22 +38,4 @@ class TripProvider extends ChangeNotifier{
     _data.clear();
     await getTripInProgress();
   }
-
-  // Future<void> getTripWithoutDrafted() async {
-  //   try{
-  //     var result = await _tripUseCase.getTripWithoutDrafted();
-  //     if(result.isNotEmpty){
-  //       _data.addAll(result);
-  //       notifyListeners();
-  //     }
-  //   }
-  //   catch (e) {
-  //     _hasError = true;
-  //     _error = e.toString();
-  //   }
-  //   finally {
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:trip_xpense/domain/entities/trip_entity.dart';
 import 'package:trip_xpense/domain/usecase/trip_usecase.dart';
 import 'package:trip_xpense/presentasion/trip/tripDetailPage.dart';
@@ -56,12 +57,12 @@ class TripListPage extends StatelessWidget {
                     ),
                     onTap: () {
                       // Handle onTap action
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TripDetailPage(trip: trip), // Melewatkan nilai tripId
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => TripDetailPage(trip: trip), // Melewatkan nilai tripId
+                      //   ),
+                      // );
                     },
                     // You can add more information here if needed
                   ),

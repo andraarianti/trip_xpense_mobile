@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:trip_xpense/data/models/trip_model.dart';
 import 'package:trip_xpense/domain/entities/expense_entity.dart';
 import 'package:trip_xpense/domain/usecase/expense_usecase.dart';
+import 'package:trip_xpense/presentasion/provider/expense_list_provider.dart';
 import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
 import '../../domain/entities/trip_entity.dart';
 
 class TripDetailPage extends StatelessWidget {
-  final TripEntity trip;
+  final TripModel trip;
   final ExpenseUseCase _expenseUseCase = ExpenseUseCase();
 
   TripDetailPage({Key? key, required this.trip}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Future<List<ExpenseEntity>> _expenseListFuture = _expenseUseCase
-        .getExpenseByTripId(trip.tripId)
-        .then((expenseList) {
-      return expenseList.map((expenseModel) {
-        return _expenseUseCase.mapToEntity(expenseModel);
-      }).toList();
-    }).catchError((error) {
-      // Handle error here
-      print('Error fetching trip list: $error');
-      return <ExpenseEntity>[];
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ExpenseListProvider>(context, listen: false)
+          .refreshData(trip.tripId);
     });
 
     final dateFormat = DateFormat('dd MMMM yyyy');
@@ -52,7 +48,9 @@ class TripDetailPage extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: trip.statusName == "In Progress" ? Colors.green : Colors.red,
+                      color: trip.statusName == "In Progress"
+                          ? Colors.green
+                          : Colors.red,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -98,19 +96,14 @@ class TripDetailPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        'Trip Date: ${dateFormat.format(trip.startDate)} - ${dateFormat.format(trip.endDate)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Text(
               'Expense Items',
               style: TextStyle(
@@ -120,34 +113,32 @@ class TripDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Expanded(
-              child: FutureBuilder<List<ExpenseEntity>>(
-                future: _expenseListFuture,
-                builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting){
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  else if(snapshot.hasError){
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  else{
-                    final expenseList = snapshot.data!;
-                    return ListView.builder(
-                        itemCount: expenseList.length,
-                        itemBuilder: (context, index){
-                          final expense = expenseList[index];
+              child: Consumer<ExpenseListProvider>(
+                  builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (provider.hasError) {
+                  print('Error : ${provider.error}');
+                  return Center(child: Text('Error: ${provider.error}'));
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: provider.data.length,
+                        itemBuilder: (context, index) {
+                          final expense = provider.data[index];
                           return Card(
-                            color: expense.isApproved == true ?  Color(0xFFE3F2FD) : Color(0xFFFFCDD2),
+                            color: expense.isApproved == true
+                                ? Color(0xFFE3F2FD)
+                                : Color(0xFFFFCDD2),
                             child: ListTile(
                               title: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(
-                                        '${expense.expenseType}',
-                                        style: TextStyle(fontWeight: FontWeight.bold)
+                                    child: Text('${expense.expenseType}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)
                                     ),
                                   ),
                                   Container(
@@ -172,17 +163,16 @@ class TripDetailPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ExpenseDetailPage(expense: expense),
+                                    builder: (context) => ExpenseDetailPage(expenseId: expense.expenseId),
                                   ),
                                 );
                               },
                             ),
                           );
-                        }
-                    );
-                  }
-                },
-              ),
+                        }),
+                  );
+                }
+              }),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
@@ -194,12 +184,10 @@ class TripDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: ElevatedButton(
-                  onPressed: (){
-
-                  },
+                  onPressed: () {},
                   style: ButtonStyle(
                     backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.blue),
+                        MaterialStateProperty.all<Color>(Colors.blue),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -213,7 +201,9 @@ class TripDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10,)
+            SizedBox(
+              height: 10,
+            )
           ],
         ),
       ),

@@ -8,8 +8,12 @@ import '../models/auth/login_model.dart';
 
 class TripRemoteDataSource {
 
+  static final Box<LoginResponse> box = Hive.box('loginBox');
+  static final LoginResponse? staff = box.getAt(0);
+  final String? _token = staff?.token;
+
   final String Url = "https://app.actualsolusi.com/bsi/TripXpense/api";
-  final String _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Imt1cm5pYXNhcmkiLCJuYmYiOjE3MTE5NTMwNDEsImV4cCI6MTcxMjAzOTQ0MSwiaWF0IjoxNzExOTUzMDQxfQ.4Nhy-Enc_HycHmjxOPR4xoyMOTcvfI5_XYKRya-eZ5Q";
+  //final String _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Imt1cm5pYXNhcmkiLCJuYmYiOjE3MTIwMzg2NzUsImV4cCI6MTcxMjEyNTA3NSwiaWF0IjoxNzEyMDM4Njc1fQ.HEaQ3kGm9TiRTpt7V1iDGjPbLrOoYb4aerLR0KM-EHw";
   Future<List<TripModel>> getTripInProgress() async {
     var response = await http.get(
         Uri.parse(Url + '/Trip/TripInProgress'),

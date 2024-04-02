@@ -18,4 +18,14 @@ class ExpenseRepository{
       rethrow;
     }
   }
+
+  Future<ExpenseModel> getExpenseById(int expenseid) async{
+    try{
+      final expense = await remoteDataSource.getExpenseById(expenseid);
+      return expense;
+    }
+    catch (e){
+      rethrow;
+    }
+  }
 }
