@@ -21,7 +21,27 @@ class TripListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Need Approval Trip List'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFD0B3FF),
+                Color(0xFFAFCBFF), // Lighter version of Colors.lightBlue
+                Color(0xFFD7F9FF), // Lighter version of Colors.lightBlue
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          'Trip List',
+          style: TextStyle(
+            fontSize: 24, // Adjust the font size as needed
+            fontWeight: FontWeight.bold, // Make the text bold
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
       ),
       body: FutureBuilder<List<TripEntity>>(
         future: _tripListFuture,

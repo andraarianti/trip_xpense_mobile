@@ -5,13 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:trip_xpense/presentasion/provider/bottom_navigation.dart';
 import 'package:trip_xpense/presentasion/provider/expense_detail_provider.dart';
 import 'package:trip_xpense/presentasion/provider/expense_list_provider.dart';
+import 'package:trip_xpense/presentasion/provider/profile_provider.dart';
+import 'package:trip_xpense/presentasion/provider/trip_detail_provider.dart';
 import 'package:trip_xpense/presentasion/provider/trip_provider.dart';
+import 'package:trip_xpense/presentasion/provider/trip_waiting_approval_provider.dart';
+import 'package:trip_xpense/presentasion/splashScreen.dart';
 import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
-import '../data/datasources/hive/hive_data_source.dart';
-import '../data/models/auth/login_model.dart';
-import '../domain/usecase/login_usecase.dart';
-import 'auth/login.dart';
+import 'data/datasources/hive/hive_data_source.dart';
+import 'data/models/auth/login_model.dart';
+import 'domain/usecase/login_usecase.dart';
+import 'presentasion/auth/login.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,6 +47,15 @@ void main() async{
       ChangeNotifierProvider<ExpenseDetailProvider>(
           create: (_) => ExpenseDetailProvider()
       ),
+      ChangeNotifierProvider<ProfileProvider>(
+          create: (_) => ProfileProvider()
+      ),
+      ChangeNotifierProvider<TripDetailProvider>(
+          create: (_) => TripDetailProvider()
+      ),
+      ChangeNotifierProvider<TripInProgressProvider>(
+          create: (_) => TripInProgressProvider()
+      ),
     ],
     child: MyApp(),
   ));
@@ -56,7 +69,7 @@ class MyApp extends StatelessWidget {
     bool isLoggedIn = box.isNotEmpty;
 
     return MaterialApp(
-      home: isLoggedIn ? BottomNavigation() : LoginPage(), // Jika belum login, arahkan ke halaman login
+      home: isLoggedIn ? BottomNavigation() : SplashScreen(), // Jika belum login, arahkan ke halaman login
     );
   }
 }
@@ -74,7 +87,7 @@ class BottomNavigation extends StatelessWidget {
           items: <BottomNavigationBarItem>[
             barItem(Icons.home, 'Home'),
             barItem(Icons.airplane_ticket, 'Trips'),
-            barItem(Icons.person_2, 'Staff'),
+            barItem(Icons.person_2, 'Profile'),
           ],
           currentIndex:
           Provider.of<BottomNavigationProvider>(context).selectedIndex,

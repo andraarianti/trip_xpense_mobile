@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 import 'package:trip_xpense/data/models/auth/login_model.dart';
 import 'package:trip_xpense/domain/entities/staff_entity.dart';
 import 'package:trip_xpense/domain/usecase/staff_usecase.dart';
 import 'package:trip_xpense/presentasion/auth/login.dart';
+import 'package:trip_xpense/presentasion/provider/profile_provider.dart';
 
 import '../../data/models/staff_model.dart';
 import '../../data/datasources/hive/hive_data_source.dart';
@@ -36,11 +38,30 @@ class StaffProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Staff Profile'),
+        title: Text('Staff Profile',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFD0B3FF),
+                Color(0xFFAFCBFF), // Lighter version of Colors.lightBlue
+                Color(0xFFD7F9FF), // Lighter version of Colors.lightBlue
+              ],
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => _logout(context), // Logout function
+            onPressed: () => _logout(context),// Logout function
           ),
         ],
       ),

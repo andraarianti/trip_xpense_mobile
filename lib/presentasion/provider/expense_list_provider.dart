@@ -19,6 +19,9 @@ class ExpenseListProvider extends ChangeNotifier{
   String get error => _error;
 
   Future<void> loadData(int tripId) async{
+    _isLoading = true;
+    notifyListeners();
+
     try{
       var result = await _expenseUseCase.getExpenseByTripId(tripId);
       _data.addAll(result);
@@ -33,7 +36,10 @@ class ExpenseListProvider extends ChangeNotifier{
     }
   }
   Future<void> refreshData(int tripId) async {
-    _data.clear();
+    if (_data != null) {
+      _data = [];
+      notifyListeners();
+    }
     await loadData(tripId);
   }
 

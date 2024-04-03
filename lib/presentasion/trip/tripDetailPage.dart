@@ -4,16 +4,18 @@ import 'package:provider/provider.dart';
 import 'package:trip_xpense/data/models/trip_model.dart';
 import 'package:trip_xpense/domain/entities/expense_entity.dart';
 import 'package:trip_xpense/domain/usecase/expense_usecase.dart';
+import 'package:trip_xpense/domain/usecase/trip_usecase.dart';
 import 'package:trip_xpense/presentasion/provider/expense_list_provider.dart';
+import 'package:trip_xpense/presentasion/provider/trip_provider.dart';
 import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
 import '../../domain/entities/trip_entity.dart';
 
 class TripDetailPage extends StatelessWidget {
   final TripModel trip;
-  final ExpenseUseCase _expenseUseCase = ExpenseUseCase();
+  final TripUseCase _tripUseCase = TripUseCase();
 
-  TripDetailPage({Key? key, required this.trip}) : super(key: key);
+  TripDetailPage({Key? key, required this.trip, required }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,27 @@ class TripDetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trip Detail'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFD0B3FF),
+                Color(0xFFAFCBFF), // Lighter version of Colors.lightBlue
+                Color(0xFFD7F9FF), // Lighter version of Colors.lightBlue
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          'Trip Detail',
+          style: TextStyle(
+            fontSize: 24, // Adjust the font size as needed
+            fontWeight: FontWeight.bold, // Make the text bold
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,7 +63,7 @@ class TripDetailPage extends StatelessWidget {
                   Text(
                     'Trip ID: ${trip.tripId}',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -57,7 +79,7 @@ class TripDetailPage extends StatelessWidget {
                       trip.statusName,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -138,17 +160,21 @@ class TripDetailPage extends StatelessWidget {
                                   Expanded(
                                     child: Text('${expense.expenseType}',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)
-                                    ),
+                                            fontWeight: FontWeight.bold)),
                                   ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: expense.isApproved == true ? Colors.lightBlue : Colors.red,
+                                      color: expense.isApproved == true
+                                          ? Colors.lightBlue
+                                          : Colors.red,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
-                                      expense.isApproved == true ? 'Approved' : 'Reject',
+                                      expense.isApproved == true
+                                          ? 'Approved'
+                                          : 'Reject',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
@@ -163,7 +189,8 @@ class TripDetailPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ExpenseDetailPage(expenseId: expense.expenseId),
+                                    builder: (context) => ExpenseDetailPage(
+                                        expense: expense, statusTrip: trip.statusName,),
                                   ),
                                 );
                               },
@@ -183,22 +210,61 @@ class TripDetailPage extends StatelessWidget {
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: ElevatedButton(
-                  onPressed: () {},
+                child: trip.statusName == 'In Progress'
+                    ? ElevatedButton(
+                  onPressed: () async {
+                    // Tampilkan dialog konfirmasi
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Confirmation'),
+                          content: Text('Are you sure you want to submit this trip? Once submitted, the data cannot be modified.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Tutup dialog
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                // Logika Approve
+                                try {
+                                  // Panggil use case untuk menyetujui pengeluaran
+                                  await _tripUseCase.submitTripApproval(trip.tripId);
+                                  // Refresh expense list
+                                  Provider.of<TripProvider>(context, listen: false)
+                                      .refreshData();
+                                } catch (e) {
+                                  // Tangani kesalahan jika diperlukan
+                                  print('Error approving expense: $e');
+                                }
+                                Navigator.of(context).pop(); // Tutup dialog
+                              },
+                              child: Text('Submit'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.blue),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Submit Trip Approval',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.blue),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Submit Trip Approval',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      )
+                    : SizedBox.shrink(),
               ),
             ),
             SizedBox(

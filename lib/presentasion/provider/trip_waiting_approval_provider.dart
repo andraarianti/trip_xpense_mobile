@@ -4,46 +4,34 @@ import 'package:trip_xpense/domain/usecase/trip_usecase.dart';
 
 import '../../data/models/trip_model.dart';
 
-class TripProvider extends ChangeNotifier {
+class TripInProgressProvider extends ChangeNotifier{
   var _tripUseCase = TripUseCase();
 
   List<TripModel> _data = [];
-
   List<TripModel> get data => _data;
 
   bool _isLoading = false;
-
   bool get isLoading => _isLoading;
 
   bool _hasError = false;
-
   bool get hasError => _hasError;
 
   String _error = '';
-
   String get error => _error;
 
-  Future<void> getTrip() async {
+  Future<void> getTripInProgress() async {
     _isLoading = true;
     notifyListeners();
 
-    try {
-      var result = await _tripUseCase.getTripWithoutDrafted();
+    try{
+      var result = await _tripUseCase.getTripInProgress();
       _data.addAll(result);
-      // Urutkan data berdasarkan status, dengan "In Progress" di bagian atas
-      _data.sort((a, b) {
-        if (a.statusName == 'In Progress') {
-          return -1; // a ditempatkan sebelum b
-        } else if (b.statusName == 'In Progress') {
-          return 1; // b ditempatkan sebelum a
-        } else {
-          return 0; // kedua trip memiliki status yang sama
-        }
-      });
-    } catch (e) {
+    }
+    catch (e) {
       _hasError = true;
       _error = e.toString();
-    } finally {
+    }
+    finally {
       _isLoading = false;
       notifyListeners();
     }
@@ -52,6 +40,6 @@ class TripProvider extends ChangeNotifier {
   Future<void> refreshData() async {
     _data.clear();
     notifyListeners();
-    await getTrip();
+    await getTripInProgress();
   }
 }

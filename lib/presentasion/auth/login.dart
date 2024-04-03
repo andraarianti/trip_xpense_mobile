@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../../domain/usecase/login_usecase.dart';
-import '../main.dart';
+import '../../main.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -15,10 +15,15 @@ class LoginPage extends StatelessWidget {
     TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: Color(0xFFF9FBF2),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Color(0xFFF9FBF2),
         title: Text('Login'),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView( // Tambahkan SingleChildScrollView di sini
+      body: SingleChildScrollView(
+        // Tambahkan SingleChildScrollView di sini
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -57,56 +62,81 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  // Ambil nilai dari input
-                  String username = usernameController.text.trim();
-                  String password = passwordController.text.trim();
-
-                  // Lakukan validasi input
-                  if (username.isEmpty || password.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Username dan password harus diisi.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
-                          ),
-                        ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 40,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xFFEE6055)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
-                    );
-                    return;
-                  }
+                    ),
+                    onPressed: () async {
+                      // Ambil nilai dari input
+                      String username = usernameController.text.trim();
+                      String password = passwordController.text.trim();
 
-                  // Panggil use case untuk login
-                  try {
-                    await loginUseCase.login(username, password);
-                    // Navigasi ke halaman utama (BottomNavigationBar)
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => BottomNavigation()),
-                    );
-                  } catch (e) {
-                    // Tangani kesalahan login
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Gagal login. Periksa kembali username dan password Anda. Error : ${e}'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
+                      // Lakukan validasi input
+                      if (username.isEmpty || password.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Error'),
+                            content: Text('Username dan password harus diisi.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('OK'),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-                child: Text('Login'),
+                        );
+                        return;
+                      }
+
+                      // Panggil use case untuk login
+                      try {
+                        await loginUseCase.login(username, password);
+                        // Navigasi ke halaman utama (BottomNavigationBar)
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavigation()),
+                        );
+                      } catch (e) {
+                        // Tangani kesalahan login
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Error'),
+                            content: Text(
+                                'Gagal login. Periksa kembali username dan password Anda. Error : ${e}'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

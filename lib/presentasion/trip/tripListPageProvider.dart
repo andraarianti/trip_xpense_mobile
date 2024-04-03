@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_xpense/presentasion/trip/tripDetailPage.dart';
+import 'package:trip_xpense/presentasion/trip/tripDetailPageProvider.dart';
 
 import '../provider/trip_provider.dart';
 
@@ -14,7 +15,27 @@ class TripPageProvider extends StatelessWidget {
     });
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trip List'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFD0B3FF),
+                Color(0xFFAFCBFF), // Lighter version of Colors.lightBlue
+                Color(0xFFD7F9FF), // Lighter version of Colors.lightBlue
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          'Trip List',
+          style: TextStyle(
+            fontSize: 24, // Adjust the font size as needed
+            fontWeight: FontWeight.bold, // Make the text bold
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
       ),
       body: Consumer<TripProvider>(
         builder: (context, provider, child) {
@@ -49,7 +70,7 @@ class TripPageProvider extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TripDetailPage(trip: trip), // Melewatkan nilai tripId
+                            builder: (context) => TripDetailPageProvider(trips: trip), // Melewatkan nilai tripId
                           ),
                         );
                       },

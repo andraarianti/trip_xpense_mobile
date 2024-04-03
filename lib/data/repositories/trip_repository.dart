@@ -1,6 +1,7 @@
 import 'package:trip_xpense/data/datasources/staff_remote_data_source.dart';
 import 'package:trip_xpense/data/datasources/trip_remote_data_source.dart';
 import 'package:trip_xpense/data/models/staff_model.dart';
+import 'package:trip_xpense/data/models/trip_detail_model.dart';
 import 'package:trip_xpense/data/models/trip_model.dart';
 
 class TripRepository{
@@ -27,9 +28,19 @@ class TripRepository{
     }
   }
 
-  Future<TripModel> getTripById(int id) async{
+  Future<TripDetailModel> getTripById(int id) async{
     try{
       final trip = await remoteDataSource.getTripById(id);
+      return trip;
+    }
+    catch (e){
+      rethrow;
+    }
+  }
+
+  Future<TripModel> submitTripApproval(int tripid) async{
+    try{
+      final trip = await remoteDataSource.submitTripApproval(tripid);
       return trip;
     }
     catch (e){
