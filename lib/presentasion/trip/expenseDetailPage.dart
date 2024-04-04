@@ -13,7 +13,8 @@ class ExpenseDetailPage extends StatelessWidget {
   final String statusTrip;
   final ApprovalUseCase _approvalUseCase = ApprovalUseCase();
 
-  ExpenseDetailPage({Key? key, required this.expense, required this.statusTrip}) : super(key: key);
+  ExpenseDetailPage({Key? key, required this.expense, required this.statusTrip})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +37,9 @@ class ExpenseDetailPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
+          elevation: 0.0,
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -49,130 +51,232 @@ class ExpenseDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          title: Text(
-            'Expense Detail',
-            style: TextStyle(
-              fontSize: 24, // Adjust the font size as needed
-              fontWeight: FontWeight.bold, // Make the text bold
-              color: Colors.white, // Set the text color to white
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.airplane_ticket_rounded,
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Trip Xpense',
+                style: TextStyle(
+                  fontSize: 24, // Adjust the font size as needed
+                  fontWeight: FontWeight.bold, // Make the text bold
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
+          centerTitle: true,
         ),
         body: Consumer<ExpenseDetailProvider>(
           builder: (context, provider, child) {
             if (provider.isLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (provider.hasError) {
-              print('Error : ${provider.error}');
               return Center(child: Text('Error: ${provider.error}'));
             } else {
               final ExpenseModel? expense = provider.data;
+              if (expense == null) {
+                return Center(child: CircularProgressIndicator());
+              }
               return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Expense Type: ${expense?.expenseType}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Item Cost: ${expense?.itemCost}',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Description: ${expense?.description}',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Status: ${expense!.isApproved ? 'Approved' : 'Reject'}',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Spacer(), // Spacer untuk menempatkan tombol di bagian bawah
-
-                    statusTrip == 'In Progress' ? Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (!expense.isApproved)
-                              ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    // Foreground color
-                                    foregroundColor: Colors.white, backgroundColor: Colors.lightBlueAccent,
-                                  ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
-                                  onPressed: () async {
-                                    // Logika Approve
-                                    try {
-                                      // Panggil use case untuk menyetujui pengeluaran
-                                      await _approvalUseCase.approveExpense(expense.expenseId, approverId!);
-                                      // Refresh expense list
-                                      Provider.of<ExpenseDetailProvider>(context, listen: false).refreshData(expense.expenseId);
-                                      Provider.of<TripDetailProvider>(context, listen: false).refreshData(expense.tripId);
-                                      Provider.of<ExpenseListProvider>(context, listen: false).refreshData(expense.tripId);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Expense Status Successfully Change'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      // Tangani kesalahan jika diperlukan
-                                      print('Error approving expense: $e');
-                                    }
-                                  },
-                                  label: const Text('Approved'),
-                                  icon: const Icon(Icons.check)
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Expense Detail',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: expense.isApproved
+                                  ? Color(0xFFA2D9A8)
+                                  : Color(
+                                      0xFFF3A4B5), // Warna badge sesuai dengan status
+                            ),
+                            child: Text(
+                              expense.isApproved ? 'Approved' : 'Rejected',
+                              // Teks pada badge
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: expense.isApproved
+                                    ? Colors.white
+                                    : Colors.white,
+                                //fontWeight: FontWeight.bold// Warna teks pada badge
                               ),
-                            if (expense.isApproved)
-                              ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    // Foreground color
-                                    foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
-                                  ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
-                                  onPressed: () async {
-                                    // Logika Reject
-                                    try {
-                                      // Panggil use case untuk menyetujui pengeluaran
-                                      await _approvalUseCase.rejectExpense(expense.expenseId, approverId!);
-                                      Provider.of<ExpenseDetailProvider>(context, listen: false).refreshData(expense.expenseId);
-                                      Provider.of<TripDetailProvider>(context, listen: false).refreshData(expense.tripId);
-                                      Provider.of<ExpenseListProvider>(context, listen: false).refreshData(expense.tripId);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Expense Status Successfully Change'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      // Tangani kesalahan jika diperlukan
-                                      print('Error approving expense: $e');
-                                    }
-                                  },
-                                  label: const Text('Reject'),
-                                  icon: const Icon(Icons.cancel)
-                              ),
-                          ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Divider(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Expense Type',
+                        style: TextStyle(
+                          fontSize: 16,
                         ),
                       ),
-                    ) : SizedBox.shrink(),
-                  ],
-                ),
-              );
+                      Text(
+                        '${expense.expenseType}',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Item Cost',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        ' ${expense.itemCost}',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Description',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '${expense.description}',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      statusTrip == 'In Progress'
+                          ? Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    if (!expense.isApproved)
+                                      ElevatedButton.icon(
+                                          style: ElevatedButton.styleFrom(
+                                            // Foreground color
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Color(0xFF66BB6A),
+                                          ).copyWith(
+                                              elevation:
+                                                  ButtonStyleButton.allOrNull(
+                                                      0.0)),
+                                          onPressed: () async {
+                                            // Logika Approve
+                                            try {
+                                              // Panggil use case untuk menyetujui pengeluaran
+                                              await _approvalUseCase
+                                                  .approveExpense(
+                                                      expense.expenseId,
+                                                      approverId!);
+                                              // Refresh expense list
+                                              Provider.of<ExpenseDetailProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(
+                                                      expense.expenseId);
+                                              Provider.of<TripDetailProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(expense.tripId);
+                                              Provider.of<ExpenseListProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(expense.tripId);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Expense Status Successfully Change'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              // Tangani kesalahan jika diperlukan
+                                              print(
+                                                  'Error approving expense: $e');
+                                            }
+                                          },
+                                          label: const Text('Approved'),
+                                          icon: const Icon(Icons.check)),
+                                    if (expense.isApproved)
+                                      ElevatedButton.icon(
+                                          style: ElevatedButton.styleFrom(
+                                            // Foreground color
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Color(0xFFFF6961),
+                                          ).copyWith(
+                                              elevation:
+                                                  ButtonStyleButton.allOrNull(
+                                                      0.0)),
+                                          onPressed: () async {
+                                            // Logika Reject
+                                            try {
+                                              // Panggil use case untuk menyetujui pengeluaran
+                                              await _approvalUseCase
+                                                  .rejectExpense(
+                                                      expense.expenseId,
+                                                      approverId!);
+                                              Provider.of<ExpenseDetailProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(
+                                                      expense.expenseId);
+                                              Provider.of<TripDetailProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(expense.tripId);
+                                              Provider.of<ExpenseListProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .refreshData(expense.tripId);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Expense Status Successfully Change'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              // Tangani kesalahan jika diperlukan
+                                              print(
+                                                  'Error approving expense: $e');
+                                            }
+                                          },
+                                          label: const Text('Reject'),
+                                          icon: const Icon(Icons.cancel)),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ));
             }
           },
         ));

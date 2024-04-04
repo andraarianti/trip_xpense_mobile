@@ -6,25 +6,22 @@ import 'package:trip_xpense/presentasion/provider/bottom_navigation.dart';
 import 'package:trip_xpense/presentasion/provider/expense_detail_provider.dart';
 import 'package:trip_xpense/presentasion/provider/expense_list_provider.dart';
 import 'package:trip_xpense/presentasion/provider/profile_provider.dart';
+import 'package:trip_xpense/presentasion/provider/toggle_button_provider.dart';
 import 'package:trip_xpense/presentasion/provider/trip_detail_provider.dart';
 import 'package:trip_xpense/presentasion/provider/trip_provider.dart';
 import 'package:trip_xpense/presentasion/provider/trip_waiting_approval_provider.dart';
 import 'package:trip_xpense/presentasion/splashScreen.dart';
-import 'package:trip_xpense/presentasion/trip/expenseDetailPage.dart';
 
 import 'data/datasources/hive/hive_data_source.dart';
 import 'data/models/auth/login_model.dart';
 import 'domain/usecase/login_usecase.dart';
-import 'presentasion/auth/login.dart';
 
 final getIt = GetIt.instance;
 
 //semua pengaturan akan ada disini
-void setup(){
+void setup() {}
 
-}
-
-void main() async{
+void main() async {
   //runApp(const MyApp());
   setup();
   HiveDataSource hiveDataSource = HiveDataSource();
@@ -35,27 +32,19 @@ void main() async{
       ChangeNotifierProvider<BottomNavigationProvider>(
         create: (_) => BottomNavigationProvider(),
       ),
-      ChangeNotifierProvider<LoginUseCase>(
-          create: (_) => LoginUseCase()
-      ),
-      ChangeNotifierProvider<TripProvider>(
-          create: (_) => TripProvider()
-      ),
+      ChangeNotifierProvider<LoginUseCase>(create: (_) => LoginUseCase()),
+      ChangeNotifierProvider<TripProvider>(create: (_) => TripProvider()),
       ChangeNotifierProvider<ExpenseListProvider>(
-          create: (_) => ExpenseListProvider()
-      ),
+          create: (_) => ExpenseListProvider()),
       ChangeNotifierProvider<ExpenseDetailProvider>(
-          create: (_) => ExpenseDetailProvider()
-      ),
-      ChangeNotifierProvider<ProfileProvider>(
-          create: (_) => ProfileProvider()
-      ),
+          create: (_) => ExpenseDetailProvider()),
+      ChangeNotifierProvider<ProfileProvider>(create: (_) => ProfileProvider()),
       ChangeNotifierProvider<TripDetailProvider>(
-          create: (_) => TripDetailProvider()
-      ),
+          create: (_) => TripDetailProvider()),
       ChangeNotifierProvider<TripInProgressProvider>(
-          create: (_) => TripInProgressProvider()
-      ),
+          create: (_) => TripInProgressProvider()),
+      ChangeNotifierProvider<ToggleButtonProvider>(
+          create: (_) => ToggleButtonProvider()),
     ],
     child: MyApp(),
   ));
@@ -69,7 +58,9 @@ class MyApp extends StatelessWidget {
     bool isLoggedIn = box.isNotEmpty;
 
     return MaterialApp(
-      home: isLoggedIn ? BottomNavigation() : SplashScreen(), // Jika belum login, arahkan ke halaman login
+      home: isLoggedIn
+          ? BottomNavigation()
+          : SplashScreen(), // Jika belum login, arahkan ke halaman login
     );
   }
 }
@@ -90,7 +81,7 @@ class BottomNavigation extends StatelessWidget {
             barItem(Icons.person_2, 'Profile'),
           ],
           currentIndex:
-          Provider.of<BottomNavigationProvider>(context).selectedIndex,
+              Provider.of<BottomNavigationProvider>(context).selectedIndex,
           selectedItemColor: Colors.lightBlueAccent,
           onTap: Provider.of<BottomNavigationProvider>(context, listen: false)
               .setSelectedIndex,
@@ -106,4 +97,3 @@ class BottomNavigation extends StatelessWidget {
     );
   }
 }
-

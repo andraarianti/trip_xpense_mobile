@@ -38,12 +38,10 @@ class StaffProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Staff Profile',
+        title: Text(
+          'Staff Profile',
           style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white
-          ),
+              fontSize: 20,  color: Colors.white),
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -61,13 +59,15 @@ class StaffProfilePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),// Logout function
+            onPressed: () => _logout(context), // Logout function
           ),
         ],
       ),
       body: Center(
         child: FutureBuilder<List<StaffEntity>>(
-          future: _staffUseCase.getByUsername(username!).then((List<StaffModel> staffModels) {
+          future: _staffUseCase
+              .getByUsername(username!)
+              .then((List<StaffModel> staffModels) {
             // Convert List<StaffModel> to List<StaffEntity>
             return staffModels.map((staffModel) {
               return StaffEntity(
@@ -99,10 +99,103 @@ class StaffProfilePage extends StatelessWidget {
               if (staffList != null && staffList.isNotEmpty) {
                 // karena Anda hanya ingin menampilkan satu item, Anda dapat mengambil item pertama dari daftar
                 final staffData = staffList[0];
-                return ListTile(
-                  title: Text('Name: ${staffData.name}'),
-                  subtitle: Text('StaffId: ${staff?.staffId}'),
-                  // Add more staff details here as needed
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            // Ganti dengan foto profil pengguna
+                            backgroundImage: AssetImage('assets/images/user.png'),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 10),
+                              Text(
+                                'Nama',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16, // Ukuran font lebih besar
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                staffData.name,
+                                style: TextStyle(fontSize: 16), // Ukuran font lebih besar
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.account_circle),
+                              SizedBox(width: 10),
+                              Text(
+                                'Username',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16, // Ukuran font lebih besar
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                staffData.username,
+                                style: TextStyle(fontSize: 16), // Ukuran font lebih besar
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.email),
+                              SizedBox(width: 10),
+                              Text(
+                                'Email',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16, // Ukuran font lebih besar
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                staffData.email,
+                                style: TextStyle(fontSize: 16), // Ukuran font lebih besar
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.group),
+                              SizedBox(width: 10),
+                              Text(
+                                'Role',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16, // Ukuran font lebih besar
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                staffData.role,
+                                style: TextStyle(fontSize: 16), // Ukuran font lebih besar
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               } else {
                 return Text('No staff found');

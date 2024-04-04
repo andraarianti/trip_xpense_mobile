@@ -4,7 +4,7 @@ import 'package:trip_xpense/domain/usecase/expense_usecase.dart';
 import '../../data/models/expense_model.dart';
 
 class ExpenseDetailProvider extends ChangeNotifier {
-  var _expenseUseCase = ExpenseUseCase();
+  late final ExpenseUseCase _expenseUseCase;
 
   ExpenseModel? _data;
   ExpenseModel? get data => _data;
@@ -17,6 +17,10 @@ class ExpenseDetailProvider extends ChangeNotifier {
 
   String _error = '';
   String get error => _error;
+
+  ExpenseDetailProvider() {
+    _expenseUseCase = ExpenseUseCase();
+  }
 
   Future<void> loadData(int expenseId) async {
     _isLoading = true;
@@ -34,11 +38,15 @@ class ExpenseDetailProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshData(int tripId) async {
-    if (_data != null) {
-      _data = null;
-      notifyListeners();
-    }
-    await loadData(tripId);
+  Future<void> refreshData(int expenseId) async {
+    _isLoading = true;
+    _hasError = false;
+    _error = '';
+    notifyListeners();
+
+    await loadData(expenseId);
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

@@ -34,6 +34,7 @@ class TripDetailPageProvider extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -47,14 +48,27 @@ class TripDetailPageProvider extends StatelessWidget {
             ),
           ),
         ),
-        title: Text(
-          'Trip Detail',
-          style: TextStyle(
-            fontSize: 24, // Adjust the font size as needed
-            fontWeight: FontWeight.bold, // Make the text bold
-            color: Colors.white, // Set the text color to white
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.airplane_ticket_rounded,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Trip Xpense',
+              style: TextStyle(
+                fontSize: 24, // Adjust the font size as needed
+                fontWeight: FontWeight.bold, // Make the text bold
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,8 +116,8 @@ class TripDetailPageProvider extends StatelessWidget {
                                       horizontal: 12, vertical: 4),
                                   decoration: BoxDecoration(
                                     color: trip.statusId == 2
-                                        ? Colors.orange
-                                        : Colors.green,
+                                        ? Color(0xFFEBA794)
+                                        : Color(0xFFD1BFFF),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(

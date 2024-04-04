@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
       body: Stack(
         children: <Widget>[
           Container(
-            height: 120,
+            height: 150,
             child: AppBar(
               elevation: 0.0,
               flexibleSpace: Container(

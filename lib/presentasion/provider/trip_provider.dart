@@ -23,6 +23,28 @@ class TripProvider extends ChangeNotifier {
 
   String get error => _error;
 
+  Future<void> getTripList(String status) async {
+    try {
+      var result = await _tripUseCase.getTripWithoutDrafted();
+      _data = await result
+          .where((entity) => entity.statusName == status)
+          .toList();
+    } catch (e) {
+      // Tangani kesalahan jika terjadi
+      _hasError = true;
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadData(String status) async {
+    _data.clear();
+    await getTripList(status);
+    notifyListeners();
+  }
+
   Future<void> getTrip() async {
     _isLoading = true;
     notifyListeners();
@@ -39,7 +61,8 @@ class TripProvider extends ChangeNotifier {
         } else {
           return 0; // kedua trip memiliki status yang sama
         }
-      });
+      }
+      );
     } catch (e) {
       _hasError = true;
       _error = e.toString();
@@ -54,4 +77,6 @@ class TripProvider extends ChangeNotifier {
     notifyListeners();
     await getTrip();
   }
+
+
 }
